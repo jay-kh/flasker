@@ -1,13 +1,15 @@
 <!DOCTYPE html>
+{%extends 'base.html'%}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+{%block baseblock%}
 <h1>Hello World!</h1>
 <p>This is my First Web Page</p>
-Isn't This cool {{first_name|capitalize}}?
+Isn't This cool {{first_name|title}}?
 <br>
 {{stuff|striptags}}
 
@@ -25,5 +27,7 @@ Isn't This cool {{first_name|capitalize}}?
 <br><br>
 {{fav_pizza.2}}
 
+
+{%endblock%}
 </body>
 </html>

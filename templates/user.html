@@ -1,10 +1,15 @@
 <!DOCTYPE html>
+{%extends 'base.html'%}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+{%block baseblock%}
 <h1>Hello, {{user_name.capitalize()}}.</h1>
+
+
+{%endblock%}
 </body>
 </html>
