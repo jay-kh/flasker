@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+{%extends 'base.html'%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{%block baseblock%}
+
+    {%if name%}
+
+        <h1>Hello {{name}}!!!</h1>
+
+    {%else%}
+
+        <h1>What's Your Name?</h1>
+        <br>
+        <form method="post">
+<!--            CSRF Token-->
+            {{form.hidden_tag()}}
+
+            {{form.name.label(class="form-label")}}
+            {{form.name(class="form-control")}}
+            <br>
+            {{form.submit(class="btn btn-secondary")}}
+
+        </form>
+
+    {%endif%}
+
+
+
+
+
+{%endblock%}
+</body>
+</html>
