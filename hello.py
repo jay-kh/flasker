@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, flash
 
 # to create a form object
 from flask_wtf import FlaskForm
@@ -44,6 +44,9 @@ def name():
 
         # it will clear the name-field for the next fill
         form.name.data = None
+
+        flash("Form Submitted Successfully")
+
     return render_template("name.html", name=name, form=form)
 
 
