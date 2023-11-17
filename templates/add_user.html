@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+{%extends 'base.html'%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{%block baseblock%}
+
+{% for message in get_flashed_messages() %}
+
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        Hey {{name}}, {{message}}!
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+{%endfor%}
+
+
+    {%if name%}
+
+        <h1>User Added</h1>
+        <br><br><br>
+        <table class="table table table-hover table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email-ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for our_user in our_users %}
+
+    <tr>
+      <td>{{our_user.id}}</td>
+      <td>{{our_user.name}}</td>
+      <td>{{our_user.email}}</td>
+    </tr>
+        {%endfor%}
+
+    </tbody>
+</table>
+        <br>
+
+
+    {%else%}
+
+        <h1>User List</h1>
+        <br>
+        <div class="shadow p-3 mb-5 bg-body-tertiary rounded">
+        <form method="post">
+<!--            CSRF Token-->
+            {{form.hidden_tag()}}
+
+            {{form.name.label(class="form-label")}}
+            {{form.name(class="form-control")}}
+
+            {{form.email.label(class="form-label")}}
+            {{form.email(class="form-control")}}
+            <br>
+            {{form.submit(class="btn btn-secondary")}}
+
+        </form>
+    </div>
+
+<br><br>
+
+<table class="table table table-hover table-striped">
+  <thead>
+    <tr>
+      <th scope="col">ID</th>
+      <th scope="col">Name</th>
+      <th scope="col">Email-ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for our_user in our_users %}
+
+    <tr>
+      <td>{{our_user.id}}</td>
+      <td>{{our_user.name}}</td>
+      <td>{{our_user.email}}</td>
+    </tr>
+        {%endfor%}
+
+    </tbody>
+</table>
+
+    {%endif%}
+{%endblock%}
+</body>
+</html>
+

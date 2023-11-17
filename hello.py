@@ -1,3 +1,6 @@
+# ==================================== Import Section ========================================
+
+
 from flask import Flask, render_template, flash
 
 # to create a form object
@@ -10,16 +13,54 @@ from wtforms import StringField, SubmitField
 # different validators for email, password, etc
 from wtforms.validators import DataRequired
 
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+# ======================================= App Config Section ========================================
+
+# create a flask instance
+# __name__ helps flask search for project files
+app = Flask(__name__)
+
+
+# add Database
+# URI - uniform resource indicator -- indicates where our database is
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///users.db"
+
+# initialize the data base
+db = SQLAlchemy(app)
+
 
 # with form there is csrf token -- it will create a secrete key with form,
 # and behind the scene it will synch with another secrete key.
 # making sure that hacker won't hijack the form,
 # we need to create a secrete key for backend
-
-# create a flask instance
-# __name__ helps flask search for project files
-app = Flask(__name__)
 app.config["SECRET_KEY"] = "This is a secrate key which not ment to be shared"
+
+# ==================================== Model Section ========================================
+
+
+# create a model
+class Users(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(100), nullable=False, unique=True)
+    date_added = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # create string
+    def __repr__(self):
+        return "<name %r>" % self.name
+
+
+# To solve RuntimeError: Working outside of application context.
+# This typically means that you attempted to use functionality that needed
+# the current application.
+# To solve this, set up an application context
+# with app.app_context().
+with app.app_context():
+    db.create_all()
+
+# ===================================== Form Section =========================================
 
 
 # create a form class
@@ -27,6 +68,16 @@ app.config["SECRET_KEY"] = "This is a secrate key which not ment to be shared"
 class NamerForm(FlaskForm):
     name = StringField("Whats Your Name", validators=[DataRequired()])
     submit = SubmitField("Submit")
+
+
+# USER Form
+class UserForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    email = StringField("Email", validators=[DataRequired()])
+    submit = SubmitField("Submit")
+
+
+# ============================================== Views Section ======================================
 
 
 # create name page
@@ -130,6 +181,35 @@ def page_not_found(e):
 def internal_error_error(e):
     return render_template("500.html")
 
+
+# user adds view
+@app.route("/user/add", methods=["GET", "POST"])
+def add_user():
+    name = None
+
+    form = UserForm()
+
+    if form.validate_on_submit():
+        # grab all the email id from database and match with user input
+        # it should be non because email should be unique
+        user = Users.query.filter_by(email=form.email.data).first()
+
+        if user is None:
+            user = Users(name=form.name.data, email=form.email.data)
+            db.session.add(user)
+            db.session.commit()
+
+        name = form.name.data
+        form.name.data = ""
+        form.email.data = ""
+        flash("User Added Successfully!")
+
+    our_users = Users.query.order_by(Users.date_added)
+
+    return render_template("add_user.html", form=form, name=name, our_users=our_users)
+
+
+# =============================================== Application Run Section =================================
 
 if __name__ == "__main__":
     app.run(debug=True)
